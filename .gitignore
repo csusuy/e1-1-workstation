@@ -1,0 +1,14 @@
+# Environment & secrets
+.env
+*.local
+*.log
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node / Build artifacts
+node_modules/
+dist/

@@ -1,0 +1,44 @@
+# ==============================================================================
+# Codyssey E1-1 Bonus Task: Multi-Container Docker Compose Configuration
+# ==============================================================================
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: codyssey-workstation-web
+    image: codyssey-web:latest
+    ports:
+      - "${HOST_PORT:-8080}:80"
+      - "${HOST_PORT_SECONDARY:-8081}:80"
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - REDIS_HOST=cache
+    volumes:
+      - ./src:/usr/share/nginx/html:ro
+      - workstation-data:/data
+    networks:
+      - workstation-net
+    restart: unless-stopped
+    depends_on:
+      - cache
+
+  cache:
+    image: redis:alpine
+    container_name: codyssey-workstation-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - workstation-net
+    restart: unless-stopped
+
+networks:
+  workstation-net:
+    driver: bridge
+
+volumes:
+  workstation-data:
+    name: codyssey-workstation-volume
+  redis-data:
